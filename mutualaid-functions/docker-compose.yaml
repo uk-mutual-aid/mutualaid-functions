@@ -1,0 +1,11 @@
+version: '3'
+services:
+  functions:
+    build:
+      context: .
+    env_file: .env
+    volumes:
+      - ./src/:/src/
+      - /src/functions/node_modules
+    ports:
+      - '5000:5000'
