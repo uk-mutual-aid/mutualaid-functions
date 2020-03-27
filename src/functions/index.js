@@ -8,7 +8,7 @@ exports.volunteerSignUp = functions.https.onRequest((request, response) => {
 })
 
 admin.initializeApp()
-let db = admin.firestore()
+const db = admin.firestore()
 
 exports.createVolunteerSignUpRecord = functions.https.onRequest(
   async (request, response) => {
