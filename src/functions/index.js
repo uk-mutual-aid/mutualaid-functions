@@ -14,7 +14,6 @@ exports.volunteerSignUp = functions.https.onRequest(
       const keys = Object.keys(object)
       keys.forEach(key => {
         if (targetKeys.includes(key)) {
-          console.log('triggered for: ', key)
           object[key] = object[key].split(',')
         }
       })
