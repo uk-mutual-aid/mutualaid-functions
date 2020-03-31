@@ -9,6 +9,17 @@ const { API_URL } = process.env
 
 exports.volunteerSignUp = functions.https.onRequest(
   async (request, response) => {
+    function certainStringValuesToArray(targetKeys, object) {
+      /* transforms certain values of the object from string to array, using comma as the separator, based on the keys provided*/
+      const keys = Object.keys(object)
+      keys.forEach(key => {
+        if (targetKeys.includes(key)) {
+          console.log('triggered for: ', key)
+          object[key] = object[key].split(',')
+        }
+      })
+      return object
+    }
     try {
       const { body } = request
       let signUpData = body
@@ -20,14 +31,7 @@ exports.volunteerSignUp = functions.https.onRequest(
         'Data Privacy Consent',
         'Do you have a car?'
       ]
-      const keys = Object.keys(signUpData)
-      keys.forEach(key => {
-        if (keysMeantToBeArrays.includes(key)) {
-          console.log('triggered for: ', key)
-          signUpData[key] = signUpData[key].split(',')
-        }
-      })
-
+      signUpData = certainStringValuesToArray(keysMeantToBeArrays, signUpData)
       const createRecordUrl =
         API_URL + CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME
       const postResult = await axios.post(createRecordUrl, signUpData).data
