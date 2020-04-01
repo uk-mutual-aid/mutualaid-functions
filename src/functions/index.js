@@ -46,6 +46,28 @@ exports.volunteerSignUp = functions.https.onRequest(
       })
       return object
     }
+
+    const boolQuestionMap = {
+      owns_car: {
+        Yes: true,
+        No: false
+      }
+    }
+
+    function parseBoolQuestionValues(obj, map) {
+      const questionKeys = Object.keys(map)
+
+      questionKeys.forEach(questionKey => {
+        // assumes that the value is an array
+        const answerArray = obj[questionKey]
+        const firstValue = answerArray[0]
+        const mapObject = map[questionKey]
+        const resultingValue = mapObject[firstValue]
+        obj[questionKey] = resultingValue
+      })
+      return obj
+    }
+
     try {
       const { body } = request
       let signUpData = body
@@ -57,8 +79,10 @@ exports.volunteerSignUp = functions.https.onRequest(
         'Data Privacy Consent',
         'Do you have a car?'
       ]
+      // todo: move below to new parseData function
       signUpData = certainStringValuesToArray(keysMeantToBeArrays, signUpData)
       signUpData = changeObjectKeys(signUpData, formItemTitleToKeyMap)
+      signUpData = parseBoolQuestionValues(signUpData, boolQuestionMap)
 
       const createRecordUrl =
         API_URL + CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME
