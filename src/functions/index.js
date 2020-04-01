@@ -9,6 +9,34 @@ const { API_URL } = process.env
 
 exports.volunteerSignUp = functions.https.onRequest(
   async (request, response) => {
+    const formItemTitleToKeyMap = {
+      Availability: 'availability',
+      'Contact Number': 'contact_number',
+      'Data privacy consent': 'data_privacy_consent',
+      Discord: 'discord',
+      'Do you have a car?': 'owns_car',
+      Email: 'email',
+      Facebook: 'facebook',
+      'I am a...': 'roles',
+      'I speak English and...': 'spoken_languages',
+      Postcode: 'postcode',
+      'Services offered': 'services_offered',
+      Telegram: 'telegram',
+      Whatsapp: 'whatsapp',
+      'Your name': 'name'
+    }
+
+    function changeObjectKeys(obj, map) {
+      let result = {}
+      const mapKeys = Object.keys(map)
+      mapKeys.forEach(mapKey => {
+        let value = obj[mapKey]
+        let newKey = map[mapKey]
+        result[newKey] = value
+      })
+      return result
+    }
+
     function certainStringValuesToArray(targetKeys, object) {
       /* transforms certain values of the object from string to array, using comma as the separator, based on the keys provided*/
       const keys = Object.keys(object)
@@ -31,6 +59,8 @@ exports.volunteerSignUp = functions.https.onRequest(
         'Do you have a car?'
       ]
       signUpData = certainStringValuesToArray(keysMeantToBeArrays, signUpData)
+      signUpData = changeObjectKeys(signUpData, formItemTitleToKeyMap)
+
       const createRecordUrl =
         API_URL + CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME
       const postResult = await axios.post(createRecordUrl, signUpData).data
