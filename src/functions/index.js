@@ -79,7 +79,7 @@ exports.createVolunteerSignUpRecord = functions.https.onRequest(
   async (request, response) => {
     try {
       const { body } = request
-      const collectionName = 'volunteer-sign-up-records'
+      const collectionName = 'sign-up-records-raw'
       const result = await db
         .collection(collectionName)
         .doc()
