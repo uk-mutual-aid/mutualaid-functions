@@ -2,8 +2,7 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const axios = require('axios')
 
-const CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME =
-  'createVolunteerSignUpRecord'
+const CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME = 'createSignUp'
 // API_URL is expected to have a trailing forward slash
 const { API_URL } = process.env
 
