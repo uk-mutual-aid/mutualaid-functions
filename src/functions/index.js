@@ -75,19 +75,17 @@ exports.volunteerSignUp = functions.https.onRequest(
 admin.initializeApp()
 const db = admin.firestore()
 
-exports.createVolunteerSignUpRecord = functions.https.onRequest(
-  async (request, response) => {
-    try {
-      const { body } = request
-      const collectionName = 'sign-up-records-raw'
-      const result = await db
-        .collection(collectionName)
-        .doc()
-        .set(body)
-      response.send(result)
-    } catch (e) {
-      console.error(e)
-      response.send(JSON.stringify(e))
-    }
+exports.createSignUp = functions.https.onRequest(async (request, response) => {
+  try {
+    const { body } = request
+    const collectionName = 'sign-ups'
+    const result = await db
+      .collection(collectionName)
+      .doc()
+      .set(body)
+    response.send(result)
+  } catch (e) {
+    console.error(e)
+    response.send(JSON.stringify(e))
   }
-)
+})
