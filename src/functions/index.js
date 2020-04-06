@@ -106,8 +106,7 @@ exports.createSignUp = functions.https.onRequest(async (request, response) => {
     const collectionName = 'sign-ups'
     const result = await db
       .collection(collectionName)
-      .doc()
-      .set(body)
+      .add(body)
     const createVolunteerPayload = helpers.parseSignUpToVolunteer(body, result.id)
     const createVolunteerUrl = API_URL + CREATE_VOLUNTEER_FUNCTION_NAME
     const postResult = await axios.post(createVolunteerUrl, createVolunteerPayload).data
