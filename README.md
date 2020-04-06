@@ -1,5 +1,9 @@
 # mutualaid-functions
 
+## Up and Running
+
+run `docker-compose up`
+
 ## Notes
 
 Initially, `ADD src/config.json /root/.config/configstore/@google-cloud/functions-emulator/config.json` in the Dockerfile allowed the ports to work.
