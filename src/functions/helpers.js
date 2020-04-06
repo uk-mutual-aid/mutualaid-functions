@@ -1,7 +1,6 @@
 function parseSignUpToVolunteer(input, signUpId) {
   const result = {
     availability: input.availability,
-    discord: input.discord,
     email: input.email,
     name: input.name,
     owns_car: input.owns_car,
