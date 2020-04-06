@@ -1,8 +1,10 @@
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const axios = require('axios')
+const helpers = require('./helpers')
 
-const CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME = 'createSignUp'
+const CREATE_SIGN_UP_FUNCTION_NAME = 'createSignUp'
+const CREATE_VOLUNTEER_FUNCTION_NAME = 'createVolunteer'
 // API_URL is expected to have a trailing forward slash
 const { API_URL } = process.env
 
@@ -85,7 +87,7 @@ exports.volunteerSignUp = functions.https.onRequest(
       signUpData = parseBoolQuestionValues(signUpData, boolQuestionMap)
 
       const createRecordUrl =
-        API_URL + CREATE_VOLUNTEER_SIGN_UP_RECORD_FUNCTION_NAME
+        API_URL + CREATE_SIGN_UP_FUNCTION_NAME
       const postResult = await axios.post(createRecordUrl, signUpData).data
       response.send(postResult)
     } catch (e) {
@@ -106,6 +108,26 @@ exports.createSignUp = functions.https.onRequest(async (request, response) => {
       .collection(collectionName)
       .doc()
       .set(body)
+    const createVolunteerPayload = helpers.parseSignUpToVolunteer(body, result.id)
+    const createVolunteerUrl = API_URL + CREATE_VOLUNTEER_FUNCTION_NAME
+    const postResult = await axios.post(createVolunteerUrl, createVolunteerPayload).data
+    response.send(postResult)
+  } catch (e) {
+    console.error(e)
+    response.send(JSON.stringify(e))
+  }
+})
+
+exports.createVolunteer = functions.https.onRequest(async (request, response) => {
+  try {
+    const { body } = request
+    // TODO: validate body matches schema
+    const collectionName = 'volunteers'
+    const result = await db
+      .collection(collectionName)
+      .doc()
+      .set(body)
+
     response.send(result)
   } catch (e) {
     console.error(e)
