@@ -172,7 +172,7 @@ exports.getVolunteersGeoJson = functions.https.onRequest(async (request, respons
         var geoJsonVolunteer = helpers.convertToGeoJson(doc);
 
 
-        // axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=nw87ad&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk')
+        // axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${postcode}&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk`)
         // .then(geocodeResponse => {
         //   // geoJsonVolunteer.geometry.coordinates.zero = geocodeResponse.data[0].geometry.location.lng;
         //   // geoJsonVolunteer.geometry.coordinates.one = geocodeResponse.data[0].geometry.location.lat;
