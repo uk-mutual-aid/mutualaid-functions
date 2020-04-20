@@ -133,3 +133,50 @@ exports.createVolunteer = functions.https.onRequest(async (request, response) =>
     response.send(JSON.stringify(e))
   }
 })
+
+exports.getVolunteersGeoJson = functions.https.onRequest(async (request, response) => {
+  try{
+    const { body } = request
+    var volunteers = [];
+
+    await db.collection('volunteers').get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+      }  
+  
+      snapshot.forEach(doc => {
+
+        var geoJsonVolunteer = helpers.convertToGeoJson(doc);
+
+
+        // axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=nw87ad&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk')
+        // .then(geocodeResponse => {
+        //   // geoJsonVolunteer.geometry.coordinates.zero = geocodeResponse.data[0].geometry.location.lng;
+        //   // geoJsonVolunteer.geometry.coordinates.one = geocodeResponse.data[0].geometry.location.lat;
+        // })
+        // .catch(error => {
+        //   console.log(error);
+        // });
+
+
+
+        volunteers.push(geoJsonVolunteer);
+
+      });
+
+    })
+    .catch(err => {
+      console.log('Error getting documents', err);
+    });
+    
+    response.send(volunteers)
+
+  } catch{
+    console.error(e)
+    response.send(JSON.stringify(e))
+  }
+
+
+})
