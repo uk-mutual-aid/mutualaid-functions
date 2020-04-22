@@ -1,6 +1,5 @@
 const axios = require('axios')
 
-
 function parseSignUpToVolunteer(input, signUpId) {
   const result = {
     availability: input.availability,
@@ -24,9 +23,11 @@ function parseSignUpToVolunteer(input, signUpId) {
 
 
 
-function convertVolunteerToGeoJson(doc){
-if (doc.group_links === undefined ) doc.group_links = {}
- const result = {
+async function convertVolunteerToGeoJson(doc){
+  if (doc.group_links === undefined ) doc.group_links = {}
+  const geocodeResponse = (await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${doc.postcode}&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk`)).data
+  // TODO: use geocodeResponse
+  const result = {
     type: 'Feature',
     properties: {
       'Display': doc.name,
