@@ -4,18 +4,19 @@ describe('parseSignUpToVolunteer:', () => {
   it('output matches expected schema', () => {
     const input = {
       availability: ['Monday', 'Tuesday'],
-      data_privacy_consent: "I consent to be contacted by my local Mutual Aid volunteer groups to join the local volunteer response to COVID-19 pandemic.",
-      discord: "discord.com",
-      email: "name@email.com",
-      facebook: "facebook.com",
-      name: "MikeMike",
+      data_privacy_consent:
+        'I consent to be contacted by my local Mutual Aid volunteer groups to join the local volunteer response to COVID-19 pandemic.',
+      discord: 'discord.com',
+      email: 'name@email.com',
+      facebook: 'facebook.com',
+      name: 'MikeMike',
       owns_car: false,
-      postcode: "NW1 1Q1",
-      roles: ["Mutual aid group admin","Local councilor"],
-      whatsapp: "whatsapp.com",
-      services_offered: "groceries,medicine",
-      spoken_languages: "swahili,french",
-      telegram: "telegram.com"
+      postcode: 'NW1 1Q1',
+      roles: ['Mutual aid group admin', 'Local councilor'],
+      whatsapp: 'whatsapp.com',
+      services_offered: 'groceries,medicine',
+      spoken_languages: 'swahili,french',
+      telegram: 'telegram.com',
     }
     const signUpId = 'yuighjb'
     const expected = {
@@ -33,9 +34,52 @@ describe('parseSignUpToVolunteer:', () => {
         telegram: input.telegram,
         discord: input.discord,
       },
-      signup_id: signUpId
+      signup_id: signUpId,
     }
-    const result = helpers.parseSignUpToVolunteer(input,signUpId)
+    const result = helpers.parseSignUpToVolunteer(input, signUpId)
+    expect(result).toEqual(expected)
+  })
+})
+
+describe('parseVolunteerToGeoJson', () => {
+  it('parses correctly', () => {
+    const input = {
+      group_links: {
+        telegram: '',
+        discord: '',
+        facebook: 'https://www.facebook.com/groups/215636692879586/',
+      },
+      services_offered: 'Shopping, Chat',
+      email: '',
+      name: 'Lynne Nathan',
+      owns_car: true,
+      spoken_languages: '',
+      availability: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+      ],
+      postcode: 'NW11 8AU',
+    }
+    const expected = {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [-0.20109, 51.57622] },
+      properties: {
+        Display: 'Lynne',
+        'Do you have a car?': 'Yes',
+        'Services offered': 'Shopping, Chat',
+        WhatsApp: 'https://chat.whatsapp.com/CJC4wwaR0824saCpEMrM7Q',
+        Facebook: 'https://www.facebook.com/groups/215636692879586/',
+        Availability:
+          'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday',
+        volunteerid: '81',
+      },
+    }
+    const result = helpers.convertToGeoJson(input)
     expect(result).toEqual(expected)
   })
 })
