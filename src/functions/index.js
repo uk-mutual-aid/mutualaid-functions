@@ -201,3 +201,8 @@ exports.getVolunteersGeoJson = functions.https.onRequest(async (request, respons
 
 
 })
+
+exports.getVolunteer = functions.https.onCall(async ({ id }, _) => {
+  const docRef = db.collection('volunteers').doc(id)
+  return (await docRef.get()).data()
+})
