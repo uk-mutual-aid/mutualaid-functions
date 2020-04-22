@@ -24,33 +24,31 @@ function parseSignUpToVolunteer(input, signUpId) {
 
 
 
-function convertToGeoJson(doc){
-  
-
- var vol = {
+function convertVolunteerToGeoJson(doc){
+ const result = {
+    type: 'Feature',
     properties: {
-      'Display': doc.data().name,
-      'Do you have a car?': doc.data().owns_car,
-      'Services offered': doc.data().services_offered,
-      // 'WhatsApp': doc.data().group_links.whatsapp,
-      // 'Facebook': doc.data().group_links.facebook,
-      'Spoken languages': doc.data().spoken_languages,
-      'Availability': doc.data().availability
+      'Display': doc.name,
+      'Do you have a car?': doc.owns_car,
+      'Services offered': doc.services_offered,
+      'WhatsApp': doc.group_links.whatsapp,
+      'Facebook': doc.group_links.facebook,
+      'Spoken languages': doc.spoken_languages,
+      'Availability': doc.availability
     },
     geometry:{
-        'type': 'Point',
-        coordinates:{
-          0: "geoCode.data[0].geometry.location.lng",
-          1: "geoCode.data[0].geometry.location.lat"
-        }
+        type: 'Point',
+        coordinates: [
+          "geoCode.data[0].geometry.location.lng",
+          "geoCode.data[0].geometry.location.lat"
+        ]
     }
   }
 
-  return vol;
-
+  return result
 }
 
 module.exports = {
   parseSignUpToVolunteer,
-  convertToGeoJson
+  convertVolunteerToGeoJson
 }

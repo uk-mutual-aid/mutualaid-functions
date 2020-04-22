@@ -72,14 +72,15 @@ describe('parseVolunteerToGeoJson', () => {
         Display: 'Lynne',
         'Do you have a car?': 'Yes',
         'Services offered': 'Shopping, Chat',
-        WhatsApp: 'https://chat.whatsapp.com/CJC4wwaR0824saCpEMrM7Q',
+        WhatsApp: '',
         Facebook: 'https://www.facebook.com/groups/215636692879586/',
         Availability:
           'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday',
+        'Spoken languages': '',
         volunteerid: '81',
       },
     }
-    const result = helpers.convertToGeoJson(input)
+    const result = helpers.convertVolunteerToGeoJson(input)
     expect(result).toEqual(expected)
   })
 })
