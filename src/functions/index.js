@@ -162,18 +162,10 @@ exports.getVolunteersGeoJson = functions.https.onRequest(async (request, respons
     const snapshots = await db.collection('volunteers').get()
     snapshots.forEach(snapshot => volunteers.push(snapshot.data()))
 
-    // axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${postcode}&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk`)
-    // .then(geocodeResponse => {
-    //   // geoJsonVolunteer.geometry.coordinates.zero = geocodeResponse.data[0].geometry.location.lng;
-    //   // geoJsonVolunteer.geometry.coordinates.one = geocodeResponse.data[0].geometry.location.lat;
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    // });
-
-    const result = volunteers.map(volunteer => helpers.convertVolunteerToGeoJson(volunteer))
+    // TODO: remove below .slice() after implementation is confirmed
+    const result = volunteers.slice(0,1).map(async volunteer => await helpers.convertVolunteerToGeoJson(volunteer))
   
-    response.send(result)
+    response.send({})
 
   } catch (e) {
     console.error(e)
