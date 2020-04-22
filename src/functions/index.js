@@ -157,44 +157,17 @@ exports.createVolunteer = functions.https.onRequest(async (request, response) =>
 
 exports.getVolunteersGeoJson = functions.https.onRequest(async (request, response) => {
   try{
-    const { body } = request
-    var volunteers = [];
+    const volunteers = []
 
-    await db.collection('volunteers').get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        console.log('No matching documents.');
-        return;
-      }  
+    const snapshots = await db.collection('volunteers').get()
+    snapshots.forEach(snapshot => volunteers.push(snapshot.data()))
+
+    // TODO: remove below .slice() after implementation is confirmed
+    const result = volunteers.slice(0,1).map(async volunteer => await helpers.convertVolunteerToGeoJson(volunteer))
   
-      snapshot.forEach(doc => {
+    response.send({})
 
-        var geoJsonVolunteer = helpers.convertToGeoJson(doc);
-
-
-        // axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${postcode}&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk`)
-        // .then(geocodeResponse => {
-        //   // geoJsonVolunteer.geometry.coordinates.zero = geocodeResponse.data[0].geometry.location.lng;
-        //   // geoJsonVolunteer.geometry.coordinates.one = geocodeResponse.data[0].geometry.location.lat;
-        // })
-        // .catch(error => {
-        //   console.log(error);
-        // });
-
-
-
-        volunteers.push(geoJsonVolunteer);
-
-      });
-
-    })
-    .catch(err => {
-      console.log('Error getting documents', err);
-    });
-    
-    response.send(volunteers)
-
-  } catch{
+  } catch (e) {
     console.error(e)
     response.send(JSON.stringify(e))
   }
