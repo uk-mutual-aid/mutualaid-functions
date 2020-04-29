@@ -17,6 +17,7 @@ describe('parseSignUpToVolunteer:', () => {
       services_offered: 'groceries,medicine',
       spoken_languages: 'swahili,french',
       telegram: 'telegram.com',
+      id: 81
     }
     const signUpId = 'yuighjb'
     const expected = {
@@ -42,45 +43,50 @@ describe('parseSignUpToVolunteer:', () => {
 })
 
 describe('parseVolunteerToGeoJson', () => {
-  it('parses correctly', () => {
-    const input = {
-      group_links: {
-        telegram: '',
-        discord: '',
-        facebook: 'https://www.facebook.com/groups/215636692879586/',
-      },
-      services_offered: 'Shopping, Chat',
-      email: '',
-      name: 'Lynne Nathan',
-      owns_car: true,
-      spoken_languages: '',
-      availability: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-      ],
-      postcode: 'NW11 8AU',
-    }
-    const expected = {
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [-0.20109, 51.57622] },
-      properties: {
-        Display: 'Lynne',
-        'Do you have a car?': 'Yes',
-        'Services offered': 'Shopping, Chat',
-        WhatsApp: '',
-        Facebook: 'https://www.facebook.com/groups/215636692879586/',
-        Availability:
-          'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday',
-        'Spoken languages': '',
-        volunteerid: '81',
-      },
-    }
-    const result = helpers.convertVolunteerToGeoJson(input)
-    expect(result).toEqual(expected)
-  })
+  const input = {
+    group_links: {
+      telegram: '',
+      discord: '',
+      facebook: 'https://www.facebook.com/groups/215636692879586/',
+    },
+    services_offered: 'Shopping, Chat',
+    email: '',
+    name: 'Lynne Nathan',
+    owns_car: true,
+    spoken_languages: '',
+    availability: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    postcode: 'NW11 8AU',
+  }
+  const expected = {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [-0.20109, 51.57622] },
+    properties: {
+      Display: 'Lynne',
+      'Do you have a car?': 'Yes',
+      'Services offered': 'Shopping, Chat',
+      WhatsApp: '',
+      Facebook: 'https://www.facebook.com/groups/215636692879586/',
+      Availability:
+        'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday',
+      'Spoken languages': '',
+      volunteerid: '81',
+    },
+  }
+  const expectedKeys = Object.keys(expected)
+    expectedKeys.forEach(key => {
+      it(`result has correct ${key} value`, async () => {
+        const result = await helpers.convertVolunteerToGeoJson(input)
+        const resultValue = result[key]
+        const expectedValue = expected[key]
+        expect(resultValue).toEqual(expectedValue)
+      })
+    })
 })
