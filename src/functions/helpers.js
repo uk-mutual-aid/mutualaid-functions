@@ -45,7 +45,7 @@ async function convertVolunteerToGeoJson(doc){
       'Facebook': doc.group_links.facebook || '',
       'Spoken languages': doc.spoken_languages || '',
       'Availability': doc.availability.join(', '),
-      'volunteerid': doc.id
+      'volunteerid': String(doc.id)
     },
     geometry:{
         type: 'Point',
