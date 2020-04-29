@@ -16,5 +16,9 @@ run `docker-compose up`
 `createSignUp` - creates a signUp record, then calls createVolunteer
 `createVolunteer` - creates a volunteer document
 
+## Notes
+
+`API_URL` is expected to contain a trailing slash
+
 
 
