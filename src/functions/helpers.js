@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { POSTCODE_LOOKUP_URL } = process.env
 
 function parseSignUpToVolunteer(input, signUpId) {
   const result = {
@@ -21,28 +22,36 @@ function parseSignUpToVolunteer(input, signUpId) {
   return result
 }
 
+async function postcodeToCoordinates(postcode) {
+  const lookupResult = (await axios.get(POSTCODE_LOOKUP_URL + postcode)).data.result
+  const { latitude: lat, longitude: lng } = lookupResult
+  return ({ lat, lng  })
+}
 
 
 async function convertVolunteerToGeoJson(doc){
+  function trimNameToFirst(name) {
+    return name.split(' ')[0]
+  }
   if (doc.group_links === undefined ) doc.group_links = {}
-  const geocodeResponse = (await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${doc.postcode}&key=AIzaSyB8VcDgYAsHXM2dKnefHCpT2VTtOQeQ-Gk`)).data
-  // TODO: use geocodeResponse
+  const coords = await postcodeToCoordinates(doc.postcode)
   const result = {
     type: 'Feature',
     properties: {
-      'Display': doc.name,
-      'Do you have a car?': doc.owns_car || '',
+      'Display': trimNameToFirst(doc.name),
+      'Do you have a car?': doc.owns_car ? 'Yes' : '',
       'Services offered': doc.services_offered || '',
       'WhatsApp': doc.group_links.whatsapp || '',
       'Facebook': doc.group_links.facebook || '',
       'Spoken languages': doc.spoken_languages || '',
-      'Availability': doc.availability
+      'Availability': doc.availability.join(', '),
+      'volunteerid': String(doc.id)
     },
     geometry:{
         type: 'Point',
         coordinates: [
-          "geoCode.data[0].geometry.location.lng",
-          "geoCode.data[0].geometry.location.lat"
+          coords.lng,
+          coords.lat
         ]
     }
   }

@@ -44,6 +44,7 @@ describe('parseSignUpToVolunteer:', () => {
 
 describe('parseVolunteerToGeoJson', () => {
   const input = {
+    id: 81,
     group_links: {
       telegram: '',
       discord: '',
@@ -67,7 +68,7 @@ describe('parseVolunteerToGeoJson', () => {
   }
   const expected = {
     type: 'Feature',
-    geometry: { type: 'Point', coordinates: [-0.20109, 51.57622] },
+    geometry: { type: 'Point', coordinates: [-0.201253, 51.576058] },
     properties: {
       Display: 'Lynne',
       'Do you have a car?': 'Yes',

@@ -19,6 +19,7 @@ run `docker-compose up`
 ## Notes
 
 `API_URL` is expected to contain a trailing slash
+`POSTCODE_LOOKUP_URL` is required by the postcodeLookup helper function
 
 
 
