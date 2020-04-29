@@ -50,8 +50,8 @@ async function convertVolunteerToGeoJson(doc){
     geometry:{
         type: 'Point',
         coordinates: [
-          "geoCode.data[0].geometry.location.lng",
-          "geoCode.data[0].geometry.location.lat"
+          coords.lng,
+          coords.lat
         ]
     }
   }
