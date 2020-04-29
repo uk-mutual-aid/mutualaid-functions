@@ -44,6 +44,7 @@ describe('parseSignUpToVolunteer:', () => {
 
 describe('parseVolunteerToGeoJson', () => {
   const input = {
+    id: 81,
     group_links: {
       telegram: '',
       discord: '',
@@ -86,6 +87,7 @@ describe('parseVolunteerToGeoJson', () => {
         const result = await helpers.convertVolunteerToGeoJson(input)
         const resultValue = result[key]
         const expectedValue = expected[key]
+        if (resultValue != expectedValue) { console.log(key, resultValue, expectedValue) }
         expect(resultValue).toEqual(expectedValue)
       })
     })
