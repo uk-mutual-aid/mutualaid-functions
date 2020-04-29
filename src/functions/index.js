@@ -7,6 +7,7 @@ const CREATE_SIGN_UP_FUNCTION_NAME = 'createSignUp'
 const CREATE_VOLUNTEER_FUNCTION_NAME = 'createVolunteer'
 // API_URL is expected to have a trailing forward slash
 const { API_URL } = process.env
+if (API_URL === undefined) console.error('API_URL is undefined')
 
 exports.volunteerSignUp = functions.https.onRequest(
   async (request, response) => {
