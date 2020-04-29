@@ -68,7 +68,7 @@ describe('parseVolunteerToGeoJson', () => {
   }
   const expected = {
     type: 'Feature',
-    geometry: { type: 'Point', coordinates: [-0.20109, 51.57622] },
+    geometry: { type: 'Point', coordinates: [-0.201253, 51.576058] },
     properties: {
       Display: 'Lynne',
       'Do you have a car?': 'Yes',
@@ -87,7 +87,6 @@ describe('parseVolunteerToGeoJson', () => {
         const result = await helpers.convertVolunteerToGeoJson(input)
         const resultValue = result[key]
         const expectedValue = expected[key]
-        if (resultValue != expectedValue) { console.log(key, resultValue, expectedValue) }
         expect(resultValue).toEqual(expectedValue)
       })
     })
