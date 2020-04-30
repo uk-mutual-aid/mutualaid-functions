@@ -4,7 +4,6 @@ const axios = require('axios')
 const handlers = require('./handlers')
 const helpers = require('./helpers')
 
-const CREATE_VOLUNTEER_FUNCTION_NAME = 'createVolunteer'
 // API_URL is expected to have a trailing forward slash
 const { API_URL } = process.env
 if (API_URL === undefined) console.error('API_URL is undefined')
@@ -14,22 +13,7 @@ exports.volunteerSignUp = functions.https.onRequest(handlers.volunteerSignUp)
 admin.initializeApp()
 const db = admin.firestore()
 
-exports.createSignUp = functions.https.onRequest(async (request, response) => {
-  try {
-    const { body } = request
-    const collectionName = 'sign-ups'
-    const result = await db
-      .collection(collectionName)
-      .add(body)
-    const createVolunteerPayload = helpers.parseSignUpToVolunteer(body, result.id)
-    const createVolunteerUrl = API_URL + CREATE_VOLUNTEER_FUNCTION_NAME
-    const postResult = await axios.post(createVolunteerUrl, createVolunteerPayload).data
-    response.send(postResult)
-  } catch (e) {
-    console.error(e)
-    response.send(JSON.stringify(e))
-  }
-})
+exports.createSignUp = functions.https.onRequest(handlers.createSignUp(db))
 
 exports.createVolunteer = functions.https.onRequest(async (request, response) => {
   
