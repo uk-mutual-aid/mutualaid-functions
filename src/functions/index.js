@@ -15,6 +15,7 @@ exports.volunteerSignUp = functions.https.onRequest(
       Availability: 'availability',
       'Contact Number': 'contact_number',
       'Data privacy consent': 'data_privacy_consent',
+      'Contact number': 'contact_number',
       Discord: 'discord',
       'Do you have a car?': 'owns_car',
       Email: 'email',
