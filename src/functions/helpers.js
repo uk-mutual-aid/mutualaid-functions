@@ -75,7 +75,7 @@ function parseGoogleFormResponseToSignUp(input) {
 
       // hack
       if (result.whatsapp === undefined ) result.whatsapp = ''
-
+      if (result.owns_car === undefined ) result.owns_car = 'No'
       return result
 }
 
@@ -109,6 +109,7 @@ async function postcodeToCoordinates(postcode) {
     return ({ lat, lng  })
   } catch(e) {
     console.error(postcode)
+    return ({ lat: 0, lng: 0})
   }
 }
 
