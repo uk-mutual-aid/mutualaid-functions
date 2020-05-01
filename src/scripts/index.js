@@ -10,7 +10,7 @@ admin.initializeApp({
 })
 const db = admin.firestore()
 
-const beginIndex = -200
+const beginIndex = -510
 
 async function main() {
   try {
@@ -30,21 +30,27 @@ async function main() {
 async function batchWrite(collectionName, array) {
   let counter = 0
   let commits = 0
-  let breakpoint = (counter != 0) && (counter % 500 === 0)
+  let batch = db.batch()
+
   const set = batch => async (docRef, item) => {
-    console.log('setting...')
+    let breakpoint = (counter != 0) && (counter % 500 === 0)
+    if (breakpoint) { 
+      console.log('breakpoint reached', counter)
+      await commit(batch)
+    }
+
+    console.log('setting...', counter)
     batch.set(docRef, item)
     counter++
-    if (breakpoint) await commit(batch)
   }
 
   const commit = async batch => {
     console.log('committing...')
     await batch.commit()
     commits++
+    batch = db.batch()
   }
 
-  let batch = db.batch()
   const collectionRef = db.collection(collectionName)
   array.forEach(async item => {  
     let docRef = collectionRef.doc()
