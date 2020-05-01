@@ -108,7 +108,7 @@ async function postcodeToCoordinates(postcode) {
     const { latitude: lat, longitude: lng } = lookupResult
     return ({ lat, lng  })
   } catch(e) {
-    console.error(e)
+    console.error(postcode)
   }
 }
 
