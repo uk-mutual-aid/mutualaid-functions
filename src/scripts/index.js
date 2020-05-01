@@ -10,17 +10,21 @@ admin.initializeApp({
 })
 const db = admin.firestore()
 
-const beginIndex = -10
+const beginIndex = -200
 
 async function main() {
-  const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
-  const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
-  const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
-  const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(convertVolunteerToGeoJson))
+  try {
+    const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
+    const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
+    const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
+    const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(convertVolunteerToGeoJson))
 
   await batchWrite('sign-ups', signUpPayloads)
   // await batchWrite('volunteers', volunteerPayloads)
   // await batchWrite('volunteer-geos', volunteerGeoPayloads)
+  } catch(e) {
+    console.error(e)
+  }
 }
 
 async function batchWrite(collectionName, array) {
