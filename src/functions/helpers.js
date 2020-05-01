@@ -72,6 +72,10 @@ function parseGoogleFormResponseToSignUp(input) {
       let result = certainStringValuesToArray(keysMeantToBeArrays, input)
       result = changeObjectKeys(result, formItemTitleToKeyMap)
       result = parseBoolQuestionValues(result, boolQuestionMap)
+
+      // hack
+      if (result.whatsapp === undefined ) result.whatsapp = ''
+
       return result
 }
 
@@ -98,9 +102,14 @@ function parseSignUpToVolunteer(input, signUpId) {
 }
 
 async function postcodeToCoordinates(postcode) {
-  const lookupResult = (await axios.get(POSTCODE_LOOKUP_URL + postcode)).data.result
-  const { latitude: lat, longitude: lng } = lookupResult
-  return ({ lat, lng  })
+  try {
+    const axiosResponse = await axios.get(POSTCODE_LOOKUP_URL + postcode)
+    const lookupResult = axiosResponse.data.result
+    const { latitude: lat, longitude: lng } = lookupResult
+    return ({ lat, lng  })
+  } catch(e) {
+    console.error(e)
+  }
 }
 
 
