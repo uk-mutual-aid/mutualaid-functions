@@ -1,0 +1,1 @@
+remember to set `FIREBASE_CONFIG`
