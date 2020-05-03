@@ -24,7 +24,7 @@ const volunteer = (admin, db) => ({
        const result = await db.collection(collectionName).add(payload)
        // update the current ID for volunteers
        await volunteersMetaRef.update({ current_id: increment })
-       return result
+       return payload
       } catch(e) {
         console.error(e)
       }
