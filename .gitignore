@@ -1,5 +1,6 @@
 src/google-app-key.json
 src/tmp
+src/scripts/tmp
 
 # Logs
 logs
