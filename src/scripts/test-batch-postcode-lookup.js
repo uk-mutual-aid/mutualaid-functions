@@ -9,7 +9,8 @@ async function main () {
   const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
   const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
   const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
-  batchLookUpPostcodes(postcodes)
+  const postcodeMaps = await batchLookUpPostcodes(postcodes)
+  return postcodeMaps
   } catch(e) {
     console.error(e)
   }

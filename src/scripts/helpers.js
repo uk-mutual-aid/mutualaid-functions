@@ -47,9 +47,8 @@ async function batchLookUpPostcodes(postcodes) {
   const uniques = Array.from(new Set(postcodes))
   const size = 100
   const chunks = chunk(uniques, size)
-  const chunkedLookups = Promise.all(chunks.map(chunk => bulkPostcodeIo(chunk)))
-  console.log(await chunkedLookups)
-  // flatten
+  const chunkedLookups = await Promise.all(chunks.map(chunk => bulkPostcodeIo(chunk)))
+  return [].concat(...chunkedLookups)
 }
 
 function batchLookUpAccessor(map, postcode) {
