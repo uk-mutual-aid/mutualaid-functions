@@ -12,7 +12,7 @@ describe('parseGoogleFormToSignUp', () => {
     Facebook: 'https://www.facebook.com/groups/215636692879586/',
     'I am a...': 'Mutual aid group admin',
     'I speak English and...': 'English, French',
-    Postcode: 'NW1 1QL',
+    Postcode: 'NW1 1QU',
     'Services offered': 'groceries',
     Telegram: 'https://telegram.com/test',
     Whatsapp: 'https://whatsapp.com/test',
