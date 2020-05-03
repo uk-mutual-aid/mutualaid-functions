@@ -18,15 +18,10 @@ exports.createVolunteer = functions.https.onRequest(handlers.createVolunteer(adm
 
 exports.getVolunteersGeoJson = functions.https.onRequest(async (request, response) => {
   try{
-    const volunteers = []
-
-    const snapshots = await db.collection('volunteers').get()
-    snapshots.forEach(snapshot => volunteers.push(snapshot.data()))
-
-    // TODO: remove below .slice() after implementation is confirmed
-    const result = volunteers.slice(0,1).map(async volunteer => await helpers.convertVolunteerToGeoJson(volunteer))
-  
-    response.send({})
+    const volunteerGeos = []
+    const snapshots = await db.collection('volunteer-geos').get()
+    snapshots.forEach(snapshot => volunteerGeos.push(snapshot.data()))
+    response.send(volunteerGeos)
 
   } catch (e) {
     console.error(e)
