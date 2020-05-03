@@ -31,7 +31,7 @@ async function main() {
     const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
     const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(convertVolunteerToGeoJson))
 
-  await batchWrite('sign-ups', signUpPayloads)
+    await batchWrite('sign-ups', signUpPayloads)
   // await batchWrite('volunteers', volunteerPayloads)
   // await batchWrite('volunteer-geos', volunteerGeoPayloads)
   } catch(e) {
