@@ -36,7 +36,7 @@ async function main() {
     const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
     const postcodesMap = await batchLookUpPostcodes(postcodes)
 
-    const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
+    const volunteerGeoPayloads = await Promise.all(volunteerPayloadsWithIds.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
 
     await batchWrite('sign-ups', signUpPayloads)
     await batchWrite('volunteers', volunteerPayloads)
