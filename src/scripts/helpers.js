@@ -27,8 +27,13 @@ function chunk (arr, len) {
 }
 
 function parseBulkPostcodeIo(queryResult) {
-  const { query, latitude: lat, longitude: lng } = queryResult
-  return ({ [query]: { lat, lng } })
+  const { query, result } = queryResult
+  if (result !== null) {
+    const { latitude: lat, longitude: lng } = result
+    return ({ [query]: { lat, lng } })
+  } else {
+    return ({ [query]: { lat: 0, lng: 0 } })
+  }
 }
 
 async function bulkPostcodeIo(postcodes) {

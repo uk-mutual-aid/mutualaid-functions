@@ -1,6 +1,6 @@
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
-const { readCsv } = require('./helpers')
+const { batchLookUpPostcodes, batchLookUpAccessor ,readCsv } = require('./helpers')
 const { parseGoogleFormResponseToSignUp, parseSignUpToVolunteer, convertVolunteerToGeoJson } = require('../functions/helpers')
 const inputPath = '../tmp/data/1may.csv'
 
@@ -29,11 +29,16 @@ async function main() {
     const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
     const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
     const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
+
+    const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
+    const postcodesMap = await batchLookUpPostcodes(postcodes)
+    // console.log(postcodesMap)
+
     const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(convertVolunteerToGeoJson))
 
-    await batchWrite('sign-ups', signUpPayloads)
-  // await batchWrite('volunteers', volunteerPayloads)
-  // await batchWrite('volunteer-geos', volunteerGeoPayloads)
+    // await batchWrite('sign-ups', signUpPayloads)
+    // await batchWrite('volunteers', volunteerPayloads)
+    // await batchWrite('volunteer-geos', volunteerGeoPayloads)
   } catch(e) {
     console.error(e)
   }
