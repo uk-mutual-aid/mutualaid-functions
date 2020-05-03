@@ -72,15 +72,20 @@ function parseGoogleFormResponseToSignUp(input) {
       let result = certainStringValuesToArray(keysMeantToBeArrays, input)
       result = changeObjectKeys(result, formItemTitleToKeyMap)
       result = parseBoolQuestionValues(result, boolQuestionMap)
+
+      // hack
+      if (result.whatsapp === undefined ) result.whatsapp = ''
+      if (result.owns_car === undefined ) result.owns_car = 'No'
       return result
 }
 
 
-function parseSignUpToVolunteer(input, signUpId) {
+function parseSignUpToVolunteer(input, signUpId = 0) {
   const result = {
     availability: input.availability,
     email: input.email,
     name: input.name,
+    contact_number: input.contact_number,
     owns_car: input.owns_car,
     postcode: input.postcode,
     roles: input.roles,
@@ -98,18 +103,24 @@ function parseSignUpToVolunteer(input, signUpId) {
 }
 
 async function postcodeToCoordinates(postcode) {
-  const lookupResult = (await axios.get(POSTCODE_LOOKUP_URL + postcode)).data.result
-  const { latitude: lat, longitude: lng } = lookupResult
-  return ({ lat, lng  })
+  try {
+    const axiosResponse = await axios.get(POSTCODE_LOOKUP_URL + postcode)
+    const lookupResult = axiosResponse.data.result
+    const { latitude: lat, longitude: lng } = lookupResult
+    return ({ lat, lng  })
+  } catch(e) {
+    console.error(postcode)
+    return ({ lat: 0, lng: 0})
+  }
 }
 
 
-async function convertVolunteerToGeoJson(doc){
+async function convertVolunteerToGeoJson(doc, postcodeLookupFunc){
   function trimNameToFirst(name) {
     return name.split(' ')[0]
   }
   if (doc.group_links === undefined ) doc.group_links = {}
-  const coords = await postcodeToCoordinates(doc.postcode)
+  const coords = await postcodeLookupFunc(doc.postcode)
   const result = {
     type: 'Feature',
     properties: {
@@ -137,5 +148,6 @@ async function convertVolunteerToGeoJson(doc){
 module.exports = {
   parseGoogleFormResponseToSignUp,
   parseSignUpToVolunteer,
+  postcodeToCoordinates,
   convertVolunteerToGeoJson
 }
