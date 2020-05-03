@@ -80,11 +80,12 @@ function parseGoogleFormResponseToSignUp(input) {
 }
 
 
-function parseSignUpToVolunteer(input, signUpId) {
+function parseSignUpToVolunteer(input, signUpId = 0) {
   const result = {
     availability: input.availability,
     email: input.email,
     name: input.name,
+    contact_number: input.contact_number,
     owns_car: input.owns_car,
     postcode: input.postcode,
     roles: input.roles,
