@@ -2,7 +2,7 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const { batchLookUpPostcodes, batchLookUpAccessor ,readCsv } = require('./helpers')
 const { parseGoogleFormResponseToSignUp, parseSignUpToVolunteer, convertVolunteerToGeoJson } = require('../functions/helpers')
-const inputPath = '../tmp/data/1may.csv'
+const inputPath = '../tmp/data/3may.csv'
 
 var fs = require('fs');
 var util = require('util');
