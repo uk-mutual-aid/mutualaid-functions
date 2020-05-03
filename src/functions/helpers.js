@@ -114,12 +114,12 @@ async function postcodeToCoordinates(postcode) {
 }
 
 
-async function convertVolunteerToGeoJson(doc){
+async function convertVolunteerToGeoJson(doc, postcodeLookupFunc){
   function trimNameToFirst(name) {
     return name.split(' ')[0]
   }
   if (doc.group_links === undefined ) doc.group_links = {}
-  const coords = await postcodeToCoordinates(doc.postcode)
+  const coords = await postcodeLookupFunc(doc.postcode)
   const result = {
     type: 'Feature',
     properties: {
@@ -147,5 +147,6 @@ async function convertVolunteerToGeoJson(doc){
 module.exports = {
   parseGoogleFormResponseToSignUp,
   parseSignUpToVolunteer,
+  postcodeToCoordinates,
   convertVolunteerToGeoJson
 }

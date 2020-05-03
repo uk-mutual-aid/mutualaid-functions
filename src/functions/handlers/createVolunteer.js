@@ -6,7 +6,7 @@ const createVolunteer = (admin, db) => async (request, response) => {
     const { body: volunteerPayload } = request
     const volunteer = models.volunteer(admin, db)
     const volunteerAddResult = await volunteer.add(volunteerPayload)
-    const volunteerGeoPayload = await helpers.convertVolunteerToGeoJson(volunteerAddResult)
+    const volunteerGeoPayload = await helpers.convertVolunteerToGeoJson(volunteerAddResult, helpers.postcodeToCoordinates)
     const volunteerGeo = models.volunteerGeo(db)
     await volunteerGeo.add(volunteerGeoPayload)
 
