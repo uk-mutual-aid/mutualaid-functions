@@ -22,19 +22,22 @@ admin.initializeApp({
 })
 const db = admin.firestore()
 
-const beginIndex = -1000
+const beginIndex = -3
 
 async function main() {
   try {
     const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
     const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
+    // get volunteer ID from csv sheet
+    const volunteerIds = rawSignUps.map(rawSignUp => rawSignUp.ID)
+
     const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
+    const volunteerPayloadsWithIds = volunteerPayloads.map(( volunteerPayload, index) => ({ ...volunteerPayload, number_id: Number(volunteerIds[index]) }) )
 
-    const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
-    const postcodesMap = await batchLookUpPostcodes(postcodes)
-    // console.log(postcodesMap)
+    // const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
+    // const postcodesMap = await batchLookUpPostcodes(postcodes)
 
-    const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(convertVolunteerToGeoJson))
+    // const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
 
     // await batchWrite('sign-ups', signUpPayloads)
     // await batchWrite('volunteers', volunteerPayloads)
@@ -66,7 +69,7 @@ async function batchWrite(collectionName, array) {
   });
 
   batchArray.forEach(async batch => await batch.commit());
-
+  console.log('batch write completed for ', collectionName)
   return;
 }
 
