@@ -31,7 +31,12 @@ const volunteer = (admin, db) => ({
     }
 })
 
+const volunteerGeo = db => ({
+  add: (doc) => db.collection('volunteer-geos').add(doc)
+})
+
 module.exports = {
   signUp,
-  volunteer
+  volunteer,
+  volunteerGeo
 }
