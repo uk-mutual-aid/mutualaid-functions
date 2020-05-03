@@ -22,11 +22,11 @@ admin.initializeApp({
 })
 const db = admin.firestore()
 
-const beginIndex = -3
+const BEGIN_INDEX = 0
 
 async function main() {
   try {
-    const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
+    const rawSignUps = (await readCsv(inputPath)).slice(BEGIN_INDEX)
     const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
     const volunteerIds = rawSignUps.map(rawSignUp => rawSignUp.ID)
 
@@ -56,7 +56,7 @@ async function batchWrite(collectionName, array) {
   let batchIndex = 0;
   let arrayWithIds = [ ...array ]
   array.forEach((item,index) => {
-
+      console.log(collectionName, index)
       // update document data here...
       const docRef = collectionRef.doc()
       const { id } = docRef
