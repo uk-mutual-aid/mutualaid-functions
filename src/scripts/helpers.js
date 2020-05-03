@@ -30,9 +30,9 @@ function parseBulkPostcodeIo(queryResult) {
   const { query, result } = queryResult
   if (result !== null) {
     const { latitude: lat, longitude: lng } = result
-    return ({ [query]: { lat, lng } })
+    return [ [query], { lat, lng } ]
   } else {
-    return ({ [query]: { lat: 0, lng: 0 } })
+    return [ [query], { lat: 0, lng: 0 } ]
   }
 }
 
@@ -53,10 +53,13 @@ async function batchLookUpPostcodes(postcodes) {
   const size = 100
   const chunks = chunk(uniques, size)
   const chunkedLookups = await Promise.all(chunks.map(chunk => bulkPostcodeIo(chunk)))
-  return [].concat(...chunkedLookups)
+  const entries = [].concat(...chunkedLookups)
+  const result = {}
+  entries.forEach(([k,v]) => result[k] = v)
+  return result
 }
 
-function batchLookUpAccessor(map, postcode) {
+const batchLookUpAccessor = map => postcode => {
   return map[postcode] || ({ lat: 0, lng: 0 })// return ({ lat, lng  })
 }
 
