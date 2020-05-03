@@ -4,13 +4,25 @@ const { readCsv } = require('./helpers')
 const { parseGoogleFormResponseToSignUp, parseSignUpToVolunteer, convertVolunteerToGeoJson } = require('../functions/helpers')
 const inputPath = '../tmp/data/1may.csv'
 
+var fs = require('fs');
+var util = require('util');
+var logFile = fs.createWriteStream('tmp/log.txt', { flags: 'w' });
+  // Or 'w' to truncate the file every time the process starts.
+var logStdout = process.stdout;
+
+console.log = function () {
+  logFile.write(util.format.apply(null, arguments) + '\n');
+  logStdout.write(util.format.apply(null, arguments) + '\n');
+}
+console.error = console.log;
+
 const serviceAccount = require('../tmp/keys/google-app-key.json')
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
 const db = admin.firestore()
 
-const beginIndex = -510
+const beginIndex = -1000
 
 async function main() {
   try {
@@ -28,37 +40,29 @@ async function main() {
 }
 
 async function batchWrite(collectionName, array) {
-  let counter = 0
-  let commits = 0
-  let batch = db.batch()
-
-  const set = batch => async (docRef, item) => {
-    let breakpoint = (counter != 0) && (counter % 500 === 0)
-    if (breakpoint) { 
-      console.log('breakpoint reached', counter)
-      await commit(batch)
-    }
-
-    console.log('setting...', counter)
-    batch.set(docRef, item)
-    counter++
-  }
-
-  const commit = async batch => {
-    console.log('committing...')
-    await batch.commit()
-    commits++
-    batch = db.batch()
-  }
-
   const collectionRef = db.collection(collectionName)
-  array.forEach(async item => {  
-    let docRef = collectionRef.doc()
-    await set(batch)(docRef,item)
-  })
+  const batchArray = [];
+  batchArray.push(db.batch());
+  let operationCounter = 0;
+  let batchIndex = 0;
 
-  await commit(batch)
-  console.log({ collectionName, commits, counter })
+  array.forEach(item => {
+
+      // update document data here...
+      const docRef = collectionRef.doc()
+      batchArray[batchIndex].set(docRef, item);
+      operationCounter++;
+
+      if (operationCounter === 499) {
+        batchArray.push(db.batch());
+        batchIndex++;
+        operationCounter = 0;
+      }
+  });
+
+  batchArray.forEach(async batch => await batch.commit());
+
+  return;
 }
 
 main()
