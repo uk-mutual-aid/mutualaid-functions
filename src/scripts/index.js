@@ -30,7 +30,9 @@ async function main() {
     const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
     const volunteerIds = rawSignUps.map(rawSignUp => rawSignUp.ID)
 
-    const volunteerPayloads = signUpPayloads.map(signUpPayload => parseSignUpToVolunteer(signUpPayload))
+    const signUpPayloadWithIds = await batchWrite('sign-ups', signUpPayloads)
+
+    const volunteerPayloads = signUpPayloadWithIds.map(signUpPayloadWithId => parseSignUpToVolunteer(signUpPayloadWithId, signUpPayloadWithId.id))
     const volunteerPayloadsWithIds = volunteerPayloads.map(( volunteerPayload, index) => ({ ...volunteerPayload, number_id: Number(volunteerIds[index]) }) )
 
     const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
@@ -38,7 +40,7 @@ async function main() {
 
     const volunteerGeoPayloads = await Promise.all(volunteerPayloadsWithIds.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
 
-    await batchWrite('sign-ups', signUpPayloads)
+    
     await batchWrite('volunteers', volunteerPayloads)
     await batchWrite('volunteer-geos', volunteerGeoPayloads)
   } catch(e) {
@@ -52,11 +54,13 @@ async function batchWrite(collectionName, array) {
   batchArray.push(db.batch());
   let operationCounter = 0;
   let batchIndex = 0;
-
-  array.forEach(item => {
+  let arrayWithIds = [ ...array ]
+  array.forEach((item,index) => {
 
       // update document data here...
       const docRef = collectionRef.doc()
+      const { id } = docRef
+      arrayWithIds[index].id = id
       batchArray[batchIndex].set(docRef, item);
       operationCounter++;
 
@@ -69,7 +73,7 @@ async function batchWrite(collectionName, array) {
 
   batchArray.forEach(async batch => await batch.commit());
   console.log('batch write completed for ', collectionName)
-  return;
+  return arrayWithIds;
 }
 
 main()
