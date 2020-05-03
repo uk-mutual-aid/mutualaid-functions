@@ -28,20 +28,19 @@ async function main() {
   try {
     const rawSignUps = (await readCsv(inputPath)).slice(beginIndex)
     const signUpPayloads = rawSignUps.map(parseGoogleFormResponseToSignUp)
-    // get volunteer ID from csv sheet
     const volunteerIds = rawSignUps.map(rawSignUp => rawSignUp.ID)
 
-    const volunteerPayloads = signUpPayloads.map(parseSignUpToVolunteer)
+    const volunteerPayloads = signUpPayloads.map(signUpPayload => parseSignUpToVolunteer(signUpPayload))
     const volunteerPayloadsWithIds = volunteerPayloads.map(( volunteerPayload, index) => ({ ...volunteerPayload, number_id: Number(volunteerIds[index]) }) )
 
-    // const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
-    // const postcodesMap = await batchLookUpPostcodes(postcodes)
+    const postcodes = signUpPayloads.map(signUpPayload => signUpPayload.postcode)
+    const postcodesMap = await batchLookUpPostcodes(postcodes)
 
-    // const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
+    const volunteerGeoPayloads = await Promise.all(volunteerPayloads.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
 
-    // await batchWrite('sign-ups', signUpPayloads)
-    // await batchWrite('volunteers', volunteerPayloads)
-    // await batchWrite('volunteer-geos', volunteerGeoPayloads)
+    await batchWrite('sign-ups', signUpPayloads)
+    await batchWrite('volunteers', volunteerPayloads)
+    await batchWrite('volunteer-geos', volunteerGeoPayloads)
   } catch(e) {
     console.error(e)
   }
