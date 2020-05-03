@@ -16,13 +16,13 @@ console.log = function () {
 }
 console.error = console.log;
 
-const serviceAccount = require('../tmp/keys/google-app-key.json')
+const serviceAccount = require('../tmp/keys/dev.json')
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
 const db = admin.firestore()
 
-const BEGIN_INDEX = 0
+const BEGIN_INDEX = -5
 
 async function main() {
   try {
@@ -41,7 +41,7 @@ async function main() {
     const volunteerGeoPayloads = await Promise.all(volunteerPayloadsWithIds.map(volunteerPayload => convertVolunteerToGeoJson(volunteerPayload, batchLookUpAccessor(postcodesMap))))
 
     
-    await batchWrite('volunteers', volunteerPayloads)
+    await batchWrite('volunteers', volunteerPayloadsWithIds)
     await batchWrite('volunteer-geos', volunteerGeoPayloads)
   } catch(e) {
     console.error(e)
