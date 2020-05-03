@@ -1,5 +1,7 @@
 const fs = require('fs')
 const neatCsv = require('neat-csv');
+const axios = require('axios');
+const { POSTCODE_LOOKUP_URL } = process.env
 
 function readCsv(path) {
   return new Promise((res,rej) => {
@@ -12,6 +14,50 @@ function readCsv(path) {
   })
 }
 
+function chunk (arr, len) {
+  var chunks = [],
+      i = 0,
+      n = arr.length;
+
+  while (i < n) {
+    chunks.push(arr.slice(i, i += len));
+  }
+
+  return chunks;
+}
+
+function parseBulkPostcodeIo(queryResult) {
+  const { query, latitude: lat, longitude: lng } = queryResult
+  return ({ [query]: { lat, lng } })
+}
+
+async function bulkPostcodeIo(postcodes) {
+  const payload = { postcodes }
+  try {
+    const response = (await axios.post(POSTCODE_LOOKUP_URL, payload)).data
+    const { result } = response
+    const parsed = result.map(parseBulkPostcodeIo)
+    return parsed
+  } catch(e) {
+    console.error(e)
+  }
+}
+
+async function batchLookUpPostcodes(postcodes) {
+  const uniques = Array.from(new Set(postcodes))
+  const size = 100
+  const chunks = chunk(uniques, size)
+  const chunkedLookups = Promise.all(chunks.map(chunk => bulkPostcodeIo(chunk)))
+  console.log(await chunkedLookups)
+  // flatten
+}
+
+function batchLookUpAccessor(map, postcode) {
+  return map[postcode] || ({ lat: 0, lng: 0 })// return ({ lat, lng  })
+}
+
 module.exports = {
+  batchLookUpPostcodes,
+  batchLookUpAccessor,
   readCsv
 }
