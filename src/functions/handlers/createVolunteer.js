@@ -5,11 +5,12 @@ const createVolunteer = (admin, db) => async (request, response) => {
   try {
     const { body: volunteerPayload } = request
     const volunteer = models.volunteer(admin, db)
-    const result = await volunteer.add(volunteerPayload)
-    const volunteerGeoPayload = helpers.convertVolunteerToGeoJson(volunteerPayload)
-    
+    const volunteerAddResult = await volunteer.add(volunteerPayload)
+    const volunteerGeoPayload = await helpers.convertVolunteerToGeoJson(volunteerAddResult)
+    const volunteerGeo = models.volunteerGeo(db)
+    await volunteerGeo.add(volunteerGeoPayload)
 
-    response.send(result)
+    response.send({})
   } catch (e) {
     console.error(e)
     response.send(JSON.stringify(e))
